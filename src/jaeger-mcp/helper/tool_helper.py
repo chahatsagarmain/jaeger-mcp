@@ -13,11 +13,6 @@ logger = logging.getLogger(__name__)
 
 SERVICE_API_VERSION = os.getenv("SERVICE_API_VERSION", "v3")
 
-_TRACE_CACHE: Dict[Tuple[str, str], Tuple[float, dict]] = {}
-_CACHE_TTL_SECONDS = 60
-_CACHE_MAX_SIZE = 50
-
-
 def ping_jaeger(ping_url: str) -> str:
     try:
         logger.info(f"testing {ping_url}")
