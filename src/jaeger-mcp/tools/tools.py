@@ -58,8 +58,8 @@ def get_trace_overview(
 
 def get_slowest_spans(
     trace_id: Annotated[str, Field(description="Unique identifier of the trace")],
-    limit: Annotated[int, Field(description="Maximum number of slow spans to return per page")] = 10,
-    offset: Annotated[int, Field(description="Pagination offset")] = 0,
+    limit: Annotated[int, Field(description="Maximum number of slow spans to return per page" , gt=0)] = 10,
+    offset: Annotated[int, Field(description="Pagination offset" , ge=0)] = 0,
     ping_url: Annotated[str, Field(description="Base URL of the Jaeger UI / Query service")] = DEFAULT_URL,
 ) -> traces.GetSlowestSpans | str:
     """Identify latency bottlenecks by retrieving the slowest spans within a specific trace, sorted by duration descending with pagination."""
