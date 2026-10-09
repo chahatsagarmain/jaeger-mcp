@@ -418,6 +418,10 @@ The agent will:
 
 Add `jaeger-mcp` to your favorite AI assistant or IDE in seconds:
 
+> 💡 **Path Placeholder:** In the configurations below, replace `<PATH_TO_JAEGER_MCP>` with the absolute path to your cloned repository:
+> - **Windows:** `"C:\\path\\to\\jaeger-mcp"` (or `"C:/path/to/jaeger-mcp"`)
+> - **macOS / Linux:** `"/Users/username/jaeger-mcp"` or `"/home/username/jaeger-mcp"`
+
 <details open>
 <summary><b>Claude Desktop</b></summary>
 
@@ -433,7 +437,7 @@ Add to your `claude_desktop_config.json`:
       "args": [
         "run",
         "--directory",
-        "D:\\jaeger-mcp",
+        "<PATH_TO_JAEGER_MCP>",
         "python",
         "src/jaeger-mcp/main.py"
       ],
@@ -444,7 +448,6 @@ Add to your `claude_desktop_config.json`:
   }
 }
 ```
-*(Replace `D:\\jaeger-mcp` with your actual repository path)*
 </details>
 
 <details>
@@ -460,7 +463,7 @@ Add to `.cursor/mcp.json` in your workspace or global `~/.cursor/mcp.json`:
       "args": [
         "run",
         "--directory",
-        "D:/jaeger-mcp",
+        "<PATH_TO_JAEGER_MCP>",
         "python",
         "src/jaeger-mcp/main.py"
       ]
@@ -483,7 +486,7 @@ Add to your MCP settings (`settings.json` or `mcp_settings.json`):
       "args": [
         "run",
         "--directory",
-        "D:/jaeger-mcp",
+        "<PATH_TO_JAEGER_MCP>",
         "python",
         "src/jaeger-mcp/main.py"
       ],
@@ -503,9 +506,9 @@ If you are using a standard virtual environment:
 {
   "mcpServers": {
     "jaeger": {
-      "command": "D:/jaeger-mcp/.venv/Scripts/python.exe",
+      "command": "<PATH_TO_JAEGER_MCP>/.venv/bin/python",
       "args": [
-        "D:/jaeger-mcp/src/jaeger-mcp/main.py"
+        "<PATH_TO_JAEGER_MCP>/src/jaeger-mcp/main.py"
       ],
       "env": {
         "SERVICE_API_VERSION": "v3"
@@ -514,7 +517,7 @@ If you are using a standard virtual environment:
   }
 }
 ```
-*(On Linux/macOS, use `.venv/bin/python`)*
+*(On Windows, replace with `<PATH_TO_JAEGER_MCP>\\.venv\\Scripts\\python.exe`)*
 </details>
 
 ---
@@ -557,8 +560,11 @@ jaeger-mcp/
 Test and inspect all tools in your browser without needing a client:
 
 ```bash
-# Launch official MCP Inspector
-npx @modelcontextprotocol/inspector uv run --directory D:/jaeger-mcp python src/jaeger-mcp/main.py
+# From the repository root:
+npx @modelcontextprotocol/inspector uv run python src/jaeger-mcp/main.py
+
+# Or by specifying the directory path:
+npx @modelcontextprotocol/inspector uv run --directory <PATH_TO_JAEGER_MCP> python src/jaeger-mcp/main.py
 ```
 
 Open the generated local URL (usually `http://localhost:5173`) to:
