@@ -4,11 +4,13 @@ from tools import tools
 
 load_dotenv(find_dotenv())
 
-mcp = MCPServer("jaeger-mcp",
-        cache_hints={
+mcp = MCPServer(
+    "jaeger-mcp",
+    cache_hints={
         "tools/list": CacheHint(ttl_ms=60_000, scope="public"),
         "resources/read": CacheHint(ttl_ms=5_000),
-})
+    },
+)
 
 mcp.tool(
     description="Check connectivity to the Jaeger query service. Verifies whether the Jaeger UI / HTTP API is reachable and responding."

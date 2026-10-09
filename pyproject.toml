@@ -62,3 +62,11 @@ jaeger_mcp = "src/jaeger-mcp"
 "jaeger_mcp.tools" = "src/jaeger-mcp/tools"
 "jaeger_mcp.helper" = "src/jaeger-mcp/helper"
 "jaeger_mcp.schemas" = "src/jaeger-mcp/schemas"
+
+[tool.ruff.lint]
+ignore = [
+    "N999",   # Invalid module name due to legacy directory naming
+    "BLE001", # Blind exception catching
+    "LOG015", # logging.info call on root logger
+]
+
