@@ -102,30 +102,23 @@ Don't have a Jaeger cluster running? Launch Jaeger All-In-One with the HotROD sa
 
 ```bash
 # Run Jaeger UI + Query API (Port 16686)
-docker run -d --name jaeger \
-  -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
-  -p 6831:6831/udp \
-  -p 6832:6832/udp \
-  -p 5778:5778 \
+docker run --rm --name jaeger \
   -p 16686:16686 \
   -p 4317:4317 \
   -p 4318:4318 \
-  -p 14250:14250 \
-  -p 14268:14268 \
-  -p 14269:14269 \
+  -p 5778:5778 \
   -p 9411:9411 \
-  jaegertracing/all-in-one:latest
+  cr.jaegertracing.io/jaegertracing/jaeger:2.22.0
 
-# (Optional) Run HotROD to generate realistic distributed traffic
-docker run --rm -it \
-  --link jaeger \
+# (Optional) Run HotROD to generate realistic distributed traffic connected to Jaeger
+docker run --rm -it --name hotrod \
   -p 8080:8080 \
-  -e JAEGER_AGENT_HOST="jaeger" \
-  -e JAEGER_AGENT_PORT="6831" \
-  jaegertracing/example-hotrod:latest
+  --link jaeger:jaeger \
+  -e OTEL_EXPORTER_OTLP_ENDPOINT="http://jaeger:4318" \
+  cr.jaegertracing.io/jaegertracing/example-hotrod:2.22.0 all
 ```
 
-Verify Jaeger is up by opening `http://localhost:16686` in your browser.
+Open `http://localhost:8080` in your browser and click on any customer button to generate live distributed traces. Verify Jaeger is up by opening `http://localhost:16686`.
 
 ---
 
