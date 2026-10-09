@@ -20,10 +20,10 @@ jobs:
           enable-cache: true
 
       - name: Run Ruff Lint Check
-        run: uv run ruff check .
+        run: uvx ruff check .
 
       - name: Run Ruff Format Check
-        run: uv run ruff format --check .
+        run: uvx ruff format --check .
 
   test:
     name: Test (${{ matrix.python-version }} on ${{ matrix.os }})
