@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "jaeger-mcp"
+name = "mcp-server-jaeger"
 version = "0.1.0"
 description = "Context-efficient Model Context Protocol (MCP) server for Jaeger distributed tracing"
 readme = "README.md"
@@ -54,6 +54,7 @@ dev = [
 ]
 
 [project.scripts]
+mcp-server-jaeger = "jaeger_mcp.main:main"
 jaeger-mcp = "jaeger_mcp.main:main"
 
 [project.urls]
@@ -62,15 +63,11 @@ Repository = "https://github.com/chahatsagarmain/jaeger-mcp"
 Issues = "https://github.com/chahatsagarmain/jaeger-mcp/issues"
 Documentation = "https://github.com/chahatsagarmain/jaeger-mcp#readme"
 
-[tool.setuptools.package-dir]
-jaeger_mcp = "src/jaeger-mcp"
-"jaeger_mcp.tools" = "src/jaeger-mcp/tools"
-"jaeger_mcp.helper" = "src/jaeger-mcp/helper"
-"jaeger_mcp.schemas" = "src/jaeger-mcp/schemas"
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.ruff.lint]
 ignore = [
-    "N999",   # Invalid module name due to legacy directory naming
     "BLE001", # Blind exception catching
     "LOG015", # logging.info call on root logger
 ]

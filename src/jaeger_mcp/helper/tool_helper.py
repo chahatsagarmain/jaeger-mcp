@@ -4,7 +4,8 @@ from datetime import UTC, datetime, timedelta
 
 import requests
 from dotenv import find_dotenv, load_dotenv
-from schemas import services, traces
+
+from jaeger_mcp.schemas import services, traces
 
 load_dotenv(find_dotenv())
 

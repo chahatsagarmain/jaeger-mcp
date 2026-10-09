@@ -5,7 +5,7 @@
       "args": [
         "run",
         "python",
-        "src/jaeger-mcp/main.py"
+        "src/jaeger_mcp/main.py"
       ],
       "env": {
         "SERVICE_API_VERSION": "v3"
