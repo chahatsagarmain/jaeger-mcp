@@ -4,6 +4,7 @@
 
 **Context-Efficient Observability & Distributed Tracing for AI Agents**
 
+[![PyPI version](https://img.shields.io/badge/PyPI-mcp--server--jaeger-blue?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/mcp-server-jaeger/)
 [![Model Context Protocol](https://img.shields.io/badge/MCP-Compatible-blueviolet?style=flat-square&logo=anthropic)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![FastMCP / MCP SDK](https://img.shields.io/badge/MCP%20SDK-v2.3+-green?style=flat-square)](https://github.com/modelcontextprotocol/python-sdk)
@@ -66,18 +67,31 @@ Instead of sending 2MB raw trace blobs, the agent queries structured, paginated,
 - **Package Manager**: [`uv`](https://docs.astral.sh/uv/) (recommended) or standard `pip`
 - **Jaeger Instance**: Local or remote Jaeger Query service (default port `16686`)
 
-### 1. Clone & Install Dependencies
+### Installation & Run Options
 
+#### Option 1: Instant Run with `uvx` (Recommended & Zero Setup)
 ```bash
-git clone https://github.com/your-username/jaeger-mcp.git
+uvx mcp-server-jaeger
+```
+
+#### Option 2: Install via PyPI
+```bash
+pip install mcp-server-jaeger
+mcp-server-jaeger
+```
+
+#### Option 3: Run with Docker
+```bash
+docker run -i --rm --network=host -e SERVICE_API_VERSION=v3 ghcr.io/chahatsagarmain/jaeger-mcp:latest
+```
+
+#### Option 4: From Source (Development)
+```bash
+git clone https://github.com/chahatsagarmain/jaeger-mcp.git
 cd jaeger-mcp
 cp example.env .env
-
-# Install with uv (fastest):
 uv sync
-
-# Or with pip:
-# python -m venv .venv && source .venv/bin/activate && pip install -e .
+uv run python -m jaeger_mcp.main
 ```
 
 ### 2. Spin up Local Jaeger & HotROD Demo (Optional)
@@ -413,13 +427,28 @@ Add `jaeger-mcp` to your favorite AI assistant or IDE in seconds:
 {
   "mcpServers": {
     "jaeger": {
+      "command": "uvx",
+      "args": ["mcp-server-jaeger"],
+      "env": {
+        "SERVICE_API_VERSION": "v3"
+      }
+    }
+  }
+}
+```
+
+*Or for local source development:*
+```json
+{
+  "mcpServers": {
+    "jaeger": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
         "<PATH_TO_JAEGER_MCP>",
         "python",
-        "src/jaeger-mcp/main.py"
+        "src/jaeger_mcp/main.py"
       ],
       "env": {
         "SERVICE_API_VERSION": "v3"
@@ -437,13 +466,25 @@ Add `jaeger-mcp` to your favorite AI assistant or IDE in seconds:
 {
   "mcpServers": {
     "jaeger": {
+      "command": "uvx",
+      "args": ["mcp-server-jaeger"]
+    }
+  }
+}
+```
+
+*Or for local source development:*
+```json
+{
+  "mcpServers": {
+    "jaeger": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
         "<PATH_TO_JAEGER_MCP>",
         "python",
-        "src/jaeger-mcp/main.py"
+        "src/jaeger_mcp/main.py"
       ]
     }
   }
@@ -456,7 +497,11 @@ Add `jaeger-mcp` to your favorite AI assistant or IDE in seconds:
 
 **Via CLI command:**
 ```bash
-opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/jaeger-mcp/main.py
+# Via published package:
+opencode mcp add jaeger -- uvx mcp-server-jaeger
+
+# Or from local source:
+opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/jaeger_mcp/main.py
 ```
 
 **Via `opencode.json`:**
@@ -466,14 +511,7 @@ opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/ja
   "mcp": {
     "jaeger": {
       "type": "local",
-      "command": [
-        "uv",
-        "run",
-        "--directory",
-        "<PATH_TO_JAEGER_MCP>",
-        "python",
-        "src/jaeger-mcp/main.py"
-      ],
+      "command": ["uvx", "mcp-server-jaeger"],
       "enabled": true,
       "environment": {
         "SERVICE_API_VERSION": "v3"
@@ -491,14 +529,8 @@ opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/ja
 {
   "mcpServers": {
     "jaeger": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "<PATH_TO_JAEGER_MCP>",
-        "python",
-        "src/jaeger-mcp/main.py"
-      ],
+      "command": "uvx",
+      "args": ["mcp-server-jaeger"],
       "transport": "stdio"
     }
   }
@@ -515,7 +547,7 @@ opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/ja
     "jaeger": {
       "command": "<PATH_TO_JAEGER_MCP>/.venv/bin/python",
       "args": [
-        "<PATH_TO_JAEGER_MCP>/src/jaeger-mcp/main.py"
+        "<PATH_TO_JAEGER_MCP>/src/jaeger_mcp/main.py"
       ],
       "env": {
         "SERVICE_API_VERSION": "v3"
@@ -534,7 +566,7 @@ opencode mcp add jaeger -- uv run --directory <PATH_TO_JAEGER_MCP> python src/ja
 ```
 jaeger-mcp/
 ├── src/
-│   └── jaeger-mcp/
+│   └── jaeger_mcp/
 │       ├── main.py              # MCPServer initialization & tool registration
 │       ├── tools/
 │       │   └── tools.py         # MCP tool handlers & default parameters
@@ -564,14 +596,14 @@ jaeger-mcp/
 
 ```bash
 # 1. Interactive testing in browser with official MCP Inspector:
-npx @modelcontextprotocol/inspector uv run python src/jaeger-mcp/main.py
+npx @modelcontextprotocol/inspector uv run python -m jaeger_mcp.main
 
-# 2. Sanity check Python imports:
-uv run python -c "import sys; sys.path.insert(0, 'src/jaeger-mcp'); import main; print('Jaeger MCP loaded cleanly!')"
+# 2. Sanity check package & tool loading:
+uv run python -c "import jaeger_mcp; from jaeger_mcp.main import mcp; print(f'Jaeger MCP loaded cleanly with {len(mcp._tool_manager._tools)} tools!')"
 
 # 3. Format and lint with ruff:
-uv run ruff check .
-uv run ruff format .
+uvx ruff check .
+uvx ruff format .
 ```
 
 ---

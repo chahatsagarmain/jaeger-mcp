@@ -1,8 +1,9 @@
 from typing import Annotated
 
-from helper import tool_helper
 from pydantic import Field
-from schemas import services, traces
+
+from jaeger_mcp.helper import tool_helper
+from jaeger_mcp.schemas import services, traces
 
 DEFAULT_URL = "http://localhost:16686"
 

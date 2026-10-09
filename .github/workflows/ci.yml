@@ -50,8 +50,9 @@ jobs:
       - name: Smoke test package import
         run: uv run python -c "import jaeger_mcp; print('jaeger_mcp imported successfully!')"
 
-      - name: Smoke test CLI entrypoint
-        run: uv run jaeger-mcp --help || true
+      - name: Smoke test CLI & tools
+        run: |
+          uv run python -c "import jaeger_mcp; from jaeger_mcp.main import mcp; assert len(mcp._tool_manager._tools) == 8; print('All 8 tools loaded successfully!')"
 
   build:
     name: Build & Validate Distribution

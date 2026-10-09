@@ -1,6 +1,7 @@
 from dotenv import find_dotenv, load_dotenv
 from mcp.server import CacheHint, MCPServer
-from tools import tools
+
+from jaeger_mcp.tools import tools
 
 load_dotenv(find_dotenv())
 
