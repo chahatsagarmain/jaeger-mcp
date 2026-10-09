@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "jaeger": {
+      "command": "uv",
+      "args": [
+        "run",
+        "python",
+        "src/jaeger-mcp/main.py"
+      ],
+      "env": {
+        "SERVICE_API_VERSION": "v3"
+      }
+    }
+  }
+}
