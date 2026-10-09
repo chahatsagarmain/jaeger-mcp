@@ -244,6 +244,9 @@ def get_slowest_spans(
         if not spans:
             return f"Trace {trace_id} contains no spans"
 
+        if offset + limit > len(spans):
+            return f"offset + limit is beyond the number of spans"
+
         sorted_spans = sorted(spans, key=lambda s: s["durationMs"], reverse=True)
         total_spans = len(sorted_spans)
 
