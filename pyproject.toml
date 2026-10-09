@@ -1,12 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "jaeger-mcp"
 version = "0.1.0"
-description = "Add your description here"
+description = "Context-efficient Model Context Protocol (MCP) server for Jaeger distributed tracing"
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.11"
+authors = [
+    { name = "Chahat Sagar", email = "chahatsagar2003@gmail.com" },
+]
+maintainers = [
+    { name = "Chahat Sagar", email = "chahatsagar2003@gmail.com" },
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "jaeger",
+    "opentelemetry",
+    "tracing",
+    "distributed-tracing",
+    "observability",
+    "telemetry",
+    "ai",
+    "llm",
+    "claude",
+    "cursor",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Bug Tracking",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: System :: Systems Administration",
+]
 dependencies = [
     "mcp[cli]>=2.3.0",
     "pydantic>=2.13.5",
     "python-dotenv>=1.2.4",
     "requests>=2.34.2",
 ]
+
+[project.scripts]
+jaeger-mcp = "jaeger_mcp.main:main"
+
+[project.urls]
+Homepage = "https://github.com/chahatsagarmain/jaeger-mcp"
+Repository = "https://github.com/chahatsagarmain/jaeger-mcp"
+Issues = "https://github.com/chahatsagarmain/jaeger-mcp/issues"
+Documentation = "https://github.com/chahatsagarmain/jaeger-mcp#readme"
+
+[tool.setuptools.package-dir]
+jaeger_mcp = "src/jaeger-mcp"
+"jaeger_mcp.tools" = "src/jaeger-mcp/tools"
+"jaeger_mcp.helper" = "src/jaeger-mcp/helper"
+"jaeger_mcp.schemas" = "src/jaeger-mcp/schemas"

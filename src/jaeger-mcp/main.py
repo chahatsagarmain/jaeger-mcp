@@ -1,6 +1,5 @@
 from dotenv import find_dotenv, load_dotenv
-from mcp.server import CacheHint
-from mcp.server import MCPServer
+from mcp.server import CacheHint, MCPServer
 from tools import tools
 
 load_dotenv(find_dotenv())
@@ -44,5 +43,10 @@ mcp.tool(
 )(tools.get_span_details)
 
 
-if __name__ == "__main__":
+def main():
+    """Run the Jaeger MCP server."""
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()
