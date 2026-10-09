@@ -1,10 +1,9 @@
 from dotenv import find_dotenv, load_dotenv
 from mcp.server import CacheHint
-
-load_dotenv(find_dotenv())
-
 from mcp.server import MCPServer
 from tools import tools
+
+load_dotenv(find_dotenv())
 
 mcp = MCPServer("jaeger-mcp",
         cache_hints={
