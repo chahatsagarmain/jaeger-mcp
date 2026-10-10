@@ -55,7 +55,6 @@ dev = [
 
 [project.scripts]
 mcp-server-jaeger = "jaeger_mcp.main:main"
-jaeger-mcp = "jaeger_mcp.main:main"
 
 [project.urls]
 Homepage = "https://github.com/chahatsagarmain/jaeger-mcp"
