@@ -29,3 +29,18 @@ def register_resources(mcp: MCPServer) -> None:
             },
             indent=2,
         )
+
+    @mcp.resource(
+        "jaeger://services",
+        name="jaeger_services",
+        title="Instrumented Services List",
+        description="List of all active service names currently registered in Jaeger.",
+        mime_type="application/json",
+    )
+    def jaeger_services() -> str:
+        """Retrieve all active service names registered in Jaeger."""
+        url = get_base_url()
+        result = tool_helper.get_all_services(url)
+        if hasattr(result, "model_dump_json"):
+            return result.model_dump_json(indent=2)
+        return json.dumps({"error": str(result)}, indent=2)
