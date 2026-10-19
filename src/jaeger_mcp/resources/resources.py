@@ -44,3 +44,18 @@ def register_resources(mcp: MCPServer) -> None:
         if hasattr(result, "model_dump_json"):
             return result.model_dump_json(indent=2)
         return json.dumps({"error": str(result)}, indent=2)
+
+    @mcp.resource(
+        "jaeger://services/{service_name}/operations",
+        name="jaeger_service_operations",
+        title="Service Operations & Span Kinds",
+        description="All operations, endpoints, and span kinds recorded for a specific service in Jaeger.",
+        mime_type="application/json",
+    )
+    def jaeger_service_operations(service_name: str) -> str:
+        """Retrieve operations and span kinds for a specific service."""
+        url = get_base_url()
+        result = tool_helper.get_service_operations(url, service_name)
+        if hasattr(result, "model_dump_json"):
+            return result.model_dump_json(indent=2)
+        return json.dumps({"error": str(result)}, indent=2)
