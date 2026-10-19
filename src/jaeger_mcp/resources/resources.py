@@ -59,3 +59,18 @@ def register_resources(mcp: MCPServer) -> None:
         if hasattr(result, "model_dump_json"):
             return result.model_dump_json(indent=2)
         return json.dumps({"error": str(result)}, indent=2)
+
+    @mcp.resource(
+        "jaeger://traces/{trace_id}/overview",
+        name="jaeger_trace_overview",
+        title="Trace Overview & Metrics",
+        description="High-level metrics, wall-clock duration, error counts, and service breakdown for a specific trace ID.",
+        mime_type="application/json",
+    )
+    def jaeger_trace_overview(trace_id: str) -> str:
+        """Retrieve high-level overview metrics for a specific trace."""
+        url = get_base_url()
+        result = tool_helper.get_trace_overview(url, trace_id)
+        if hasattr(result, "model_dump_json"):
+            return result.model_dump_json(indent=2)
+        return json.dumps({"error": str(result)}, indent=2)
