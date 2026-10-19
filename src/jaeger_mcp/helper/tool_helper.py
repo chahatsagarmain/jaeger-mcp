@@ -1,39 +1,42 @@
 import logging
-import os
 from datetime import UTC, datetime, timedelta
 
 import requests
 from dotenv import find_dotenv, load_dotenv
 
+from jaeger_mcp.config import get_base_url, settings
 from jaeger_mcp.schemas import services, traces
 
 load_dotenv(find_dotenv())
 
 logger = logging.getLogger(__name__)
 
-SERVICE_API_VERSION = os.getenv("SERVICE_API_VERSION", "v3")
+SERVICE_API_VERSION = settings.service_api_version
 
 
-def ping_jaeger(ping_url: str) -> str:
+def ping_jaeger(ping_url: str | None = None) -> str:
+    url = get_base_url(ping_url)
     try:
-        logger.info(f"testing {ping_url}")
-        response = requests.get(ping_url)
+        logger.info(f"testing {url}")
+        response = requests.get(url, timeout=settings.request_timeout_seconds)
         if response.status_code == 200:
-            logger.info(f"{ping_url} is active")
-            return f"jaeger accessible on {ping_url}"
+            logger.info(f"{url} is active")
+            return f"jaeger accessible on {url}"
         else:
-            logger.warning(f"{ping_url} is down")
-            return f"cannot connect to jaeger on {ping_url}"
+            logger.warning(f"{url} is down")
+            return f"cannot connect to jaeger on {url}"
     except Exception as e:
-        logger.error(f"raised exception here for {ping_url} : {e!s}")
-        return f"cannot connect to jaeger on {ping_url} , maybe jaeger is not deployed"
+        logger.error(f"raised exception here for {url} : {e!s}")
+        return f"cannot connect to jaeger on {url} , maybe jaeger is not deployed"
 
 
-def get_all_services(ping_url: str) -> services.GetAllServices | str:
+def get_all_services(ping_url: str | None = None) -> services.GetAllServices | str:
+    url = get_base_url(ping_url)
     try:
-        service_url = f"{ping_url}/api/{SERVICE_API_VERSION}/services"
+        service_url = f"{url}/api/{SERVICE_API_VERSION}/services"
         logger.info(f"getting services for {service_url}")
-        response = requests.get(service_url)
+        response = requests.get(service_url, timeout=settings.request_timeout_seconds)
+
         logging.info(f"{response.json()}")
         if response.status_code == 200:
             logger.info(f"{service_url} is active")
@@ -50,14 +53,15 @@ def get_all_services(ping_url: str) -> services.GetAllServices | str:
 
 
 def get_service_operations(
-    ping_url: str, service_name: str
+    ping_url: str | None = None, service_name: str = ""
 ) -> services.GetServiceOperations | str:
+    url = get_base_url(ping_url)
     try:
         service_url = (
-            f"{ping_url}/api/{SERVICE_API_VERSION}/operations?service={service_name}"
+            f"{url}/api/{SERVICE_API_VERSION}/operations?service={service_name}"
         )
         logger.info(f"getting services for {service_url}")
-        response = requests.get(service_url)
+        response = requests.get(service_url, timeout=settings.request_timeout_seconds)
         logging.info(f"{response.json()}")
         if response.status_code == 200:
             logger.info(f"{service_url} is active")
@@ -81,15 +85,16 @@ def get_service_operations(
 
 
 def get_trace_summaries(
-    ping_url: str,
-    service_name: str,
+    ping_url: str | None = None,
+    service_name: str = "",
     start_time_min: str | None = None,
     start_time_max: str | None = None,
     search_depth: int = 20,
     operation_name: str | None = None,
 ) -> traces.GetTraceSummaries | str:
+    url = get_base_url(ping_url)
     try:
-        service_url = f"{ping_url}/api/{SERVICE_API_VERSION}/trace-summaries"
+        service_url = f"{url}/api/{SERVICE_API_VERSION}/trace-summaries"
 
         if not start_time_max:
             start_time_max = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
@@ -108,7 +113,9 @@ def get_trace_summaries(
             params["query.operationName"] = operation_name
 
         logger.info(f"getting trace summaries for {service_url} with params {params}")
-        response = requests.get(service_url, params=params)
+        response = requests.get(
+            service_url, params=params, timeout=settings.request_timeout_seconds
+        )
         logger.info(f"{response.status_code}")
         if response.status_code == 200:
             logger.info(f"{service_url} is active")
@@ -143,10 +150,14 @@ def get_trace_summaries(
         )
 
 
-def _fetch_raw_trace(ping_url: str, trace_id: str) -> tuple[dict | None, str | None]:
-    url = f"{ping_url}/api/traces/{trace_id}"
+def _fetch_raw_trace(
+    ping_url: str | None, trace_id: str
+) -> tuple[dict | None, str | None]:
+    base_url = get_base_url(ping_url)
+    url = f"{base_url}/api/traces/{trace_id}"
     try:
-        resp = requests.get(url)
+        resp = requests.get(url, timeout=settings.request_timeout_seconds)
+
         if resp.status_code == 200:
             data = resp.json()
             return data, None
@@ -204,7 +215,9 @@ def _parse_trace_spans(raw_data: dict, trace_id: str = "") -> list[dict]:
     return spans
 
 
-def get_trace_overview(ping_url: str, trace_id: str) -> traces.TraceOverview | str:
+def get_trace_overview(
+    ping_url: str | None = None, trace_id: str = ""
+) -> traces.TraceOverview | str:
     try:
         raw_data, err = _fetch_raw_trace(ping_url, trace_id)
         if err or not raw_data:
@@ -268,8 +281,8 @@ def get_trace_overview(ping_url: str, trace_id: str) -> traces.TraceOverview | s
 
 
 def get_slowest_spans(
-    ping_url: str,
-    trace_id: str,
+    ping_url: str | None = None,
+    trace_id: str = "",
     limit: int = 10,
     offset: int = 0,
 ) -> traces.GetSlowestSpans | str:
@@ -317,7 +330,9 @@ def get_slowest_spans(
         return f"Error retrieving slowest spans for {trace_id}: {e!s}"
 
 
-def get_trace_errors(ping_url: str, trace_id: str) -> traces.TraceErrors | str:
+def get_trace_errors(
+    ping_url: str | None = None, trace_id: str = ""
+) -> traces.TraceErrors | str:
     try:
         raw_data, err = _fetch_raw_trace(ping_url, trace_id)
         if err or not raw_data:
@@ -370,8 +385,9 @@ def get_trace_errors(ping_url: str, trace_id: str) -> traces.TraceErrors | str:
 
 
 def get_span_details(
-    ping_url: str, trace_id: str, span_id: str
+    ping_url: str | None = None, trace_id: str = "", span_id: str = ""
 ) -> traces.SpanDetails | str:
+
     try:
         raw_data, err = _fetch_raw_trace(ping_url, trace_id)
         if err or not raw_data:
