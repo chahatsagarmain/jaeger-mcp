@@ -1,6 +1,7 @@
 from dotenv import find_dotenv, load_dotenv
 from mcp.server import CacheHint, MCPServer
 
+from jaeger_mcp.prompts.prompts import register_prompts
 from jaeger_mcp.resources.resources import register_resources
 from jaeger_mcp.tools import tools
 
@@ -48,6 +49,7 @@ mcp.tool(
 )(tools.get_span_details)
 
 register_resources(mcp)
+register_prompts(mcp)
 
 
 def main():
