@@ -1,9 +1,11 @@
 from dotenv import find_dotenv, load_dotenv
 from mcp.server import CacheHint, MCPServer
 
+from jaeger_mcp.resources.resources import register_resources
 from jaeger_mcp.tools import tools
 
 load_dotenv(find_dotenv())
+
 
 mcp = MCPServer(
     "jaeger-mcp",
@@ -44,6 +46,8 @@ mcp.tool(
 mcp.tool(
     description="Get granular details of a specific span within a trace, including exact timestamps, duration, attributes, events/logs, and child spans."
 )(tools.get_span_details)
+
+register_resources(mcp)
 
 
 def main():
