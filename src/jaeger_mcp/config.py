@@ -21,3 +21,11 @@ class Settings(BaseModel):
 
 
 settings = Settings()
+
+
+def get_base_url(override_url: str | None = None) -> str:
+    """Return override_url if non-empty, otherwise fallback to configured base URL.
+
+    Strips any trailing slash.
+    """
+    return (override_url or settings.jaeger_base_url).rstrip("/")
